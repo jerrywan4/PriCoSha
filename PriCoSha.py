@@ -117,6 +117,43 @@ def logout():
 	session.pop('username')
 	return redirect('/')
 
+@app.route('/createGroup', methods=['GET', 'POST'])
+def createGroup():
+	return render_template('createGroup.html')
+
+@app.route('/createGroupAction', methods=['GET', 'POST'])
+def createGroupAction():
+	username = session['username']
+	group_name = request.form['groupName']
+	description = request.form['description']
+
+	cursor = conn.cursor()
+
+	query = "INSERT INTO FriendGroup VALUES(%s, %s, %s)"
+	cursor.execute(query, (group_name, username, description))
+	conn.commit()
+	cursor.close()
+	return render_template('home.html')
+
+@app.route('/addFriend', methods =['GET','POST'])
+def addFriend():
+	return render_template('addFriend.html')
+
+@app.route('/addFriendAction', methods =['GET','POST'])
+def addFriendAction():
+	friendUsername = request.form['friendName']
+	friendGroup = request.form['friendGroup']
+	creatorName = session['username']
+
+	cursor = conn.cursor()
+
+	query = "INSERT INTO Member VALUES(%s, %s, %s)"
+	cursor.execute(query, (friendUsername, friendGroup, creatorName))
+	conn.commit()
+	cursor.close()
+	return render_template('home.html')
+
+
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
