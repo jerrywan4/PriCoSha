@@ -153,6 +153,29 @@ def addFriendAction():
 	cursor.close()
 	return render_template('home.html')
 
+@app.route('/addContent', methods =['GET', 'POST'])
+def addContent():
+	return render_template('addContent.html')
+
+@app.route('/addContentAction', methods =['GET', 'POST'])
+def addContentAction():
+	username = session['username']
+	title = request.form['contentTitle']
+	link = request.form['link']
+	status = request.form['status']
+	cursor = conn.cursor()
+	query = "INSERT INTO Content (username, file_path, content_name, public) VALUES(%s, %s, %s, %s)"
+	if status == "private":
+		cursor.execute(query, (username, link, title, False))
+		conn.commit()
+		cursor.close()
+		return render_template('privacySettings.html')
+	else:
+		cursor.execute(query, (username, link, title, True))
+		conn.commit()
+		cursor.close()
+
+	return render_template('home.html')
 
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
