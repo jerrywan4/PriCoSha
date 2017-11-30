@@ -1,6 +1,7 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
+import hashlib
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -35,6 +36,9 @@ def loginAuth():
 	username = request.form['username']
 	password = request.form['password']
 
+	#hashing password
+	password = hashlib.md5(password).hexdigest()
+
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
@@ -61,6 +65,10 @@ def registerAuth():
 	#grabs information from the forms
 	username = request.form['username']
 	password = request.form['password']
+
+	#hashing password
+	password = hashlib.md5(password).hexdigest()
+
 
 	#cursor used to send queries
 	cursor = conn.cursor()
