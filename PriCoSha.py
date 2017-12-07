@@ -1,6 +1,10 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
+<<<<<<< HEAD
+=======
+import hashlib
+>>>>>>> 064e4929b605d79c9015bca284902dc625f0cceb
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -8,7 +12,11 @@ app = Flask(__name__)
 #Configure MySQL
 conn = pymysql.connect(host='localhost',
                        user='root',
+<<<<<<< HEAD
                        password='root',
+=======
+                       password='',
+>>>>>>> 064e4929b605d79c9015bca284902dc625f0cceb
                        db='test',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
@@ -35,6 +43,12 @@ def loginAuth():
 	username = request.form['username']
 	password = request.form['password']
 
+<<<<<<< HEAD
+=======
+	#hashing password
+	password = hashlib.md5(password).hexdigest()
+
+>>>>>>> 064e4929b605d79c9015bca284902dc625f0cceb
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
@@ -62,6 +76,13 @@ def registerAuth():
 	username = request.form['username']
 	password = request.form['password']
 
+<<<<<<< HEAD
+=======
+	#hashing password
+	password = hashlib.md5(password).hexdigest()
+
+
+>>>>>>> 064e4929b605d79c9015bca284902dc625f0cceb
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
@@ -109,6 +130,69 @@ def logout():
 	session.pop('username')
 	return redirect('/')
 
+<<<<<<< HEAD
+=======
+@app.route('/createGroup', methods=['GET', 'POST'])
+def createGroup():
+	return render_template('createGroup.html')
+
+@app.route('/createGroupAction', methods=['GET', 'POST'])
+def createGroupAction():
+	username = session['username']
+	group_name = request.form['groupName']
+	description = request.form['description']
+
+	cursor = conn.cursor()
+
+	query = "INSERT INTO FriendGroup VALUES(%s, %s, %s)"
+	cursor.execute(query, (group_name, username, description))
+	conn.commit()
+	cursor.close()
+	return render_template('home.html')
+
+@app.route('/addFriend', methods =['GET','POST'])
+def addFriend():
+	return render_template('addFriend.html')
+
+@app.route('/addFriendAction', methods =['GET','POST'])
+def addFriendAction():
+	friendUsername = request.form['friendName']
+	friendGroup = request.form['friendGroup']
+	creatorName = session['username']
+
+	cursor = conn.cursor()
+
+	query = "INSERT INTO Member VALUES(%s, %s, %s)"
+	cursor.execute(query, (friendUsername, friendGroup, creatorName))
+	conn.commit()
+	cursor.close()
+	return render_template('home.html')
+
+@app.route('/addContent', methods =['GET', 'POST'])
+def addContent():
+	return render_template('addContent.html')
+
+@app.route('/addContentAction', methods =['GET', 'POST'])
+def addContentAction():
+	username = session['username']
+	title = request.form['contentTitle']
+	link = request.form['link']
+	status = request.form['status']
+	cursor = conn.cursor()
+	query = "INSERT INTO Content (username, file_path, content_name, public) VALUES(%s, %s, %s, %s)"
+	if status == "private":
+		cursor.execute(query, (username, link, title, False))
+		conn.commit()
+		cursor.close()
+		return render_template('privacySettings.html')
+	else:
+		cursor.execute(query, (username, link, title, True))
+		conn.commit()
+		cursor.close()
+
+	return render_template('home.html')
+
+>>>>>>> 064e4929b605d79c9015bca284902dc625f0cceb
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
